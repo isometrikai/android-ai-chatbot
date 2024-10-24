@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resources>
+
+  <string name="chat_bot_id">bot_id</string>
+  <string name="app_secret">APP_SECRET</string>
+  <string name="license_key">LICENSE_KEY</string>
+  <string name="user_id">USER_ID</string>
+  <string name="store_category_id">STORE_CATEGORY_ID</string>
+  <string name="location">LOCATION</string>
+  <string name="latitude"></string>
+  <string name="longitude"></string>
+
+</resources>
