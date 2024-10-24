@@ -6,6 +6,7 @@ enum class MessageType {
     USER,
     BOT_REPLY,
     BOT_WIDGET,
+    BOT_RESPONSE_FLOW,
     BOT_PROCESSING,
     BOT_SUGGESTION
 }

@@ -2,6 +2,7 @@ package io.isometrik.androidchatbot.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,7 +47,7 @@ import io.isometrik.androidchatbot.presentation.extensions.toFont
 import io.isometrik.androidchatbot.presentation.extensions.toPrice
 
 @Composable
-fun WidgetItem(widget: Widget, modifier: Modifier = Modifier, uiPreferences: UiPreferences) {
+fun WidgetCardItem(widget: Widget, modifier: Modifier = Modifier, uiPreferences: UiPreferences, onActionClick : (Widget) -> Unit) {
     val isDish =
         widget.avg_rating.isNullOrBlank() && widget.average_cost == null && widget.supported_order_types == null
     Card(
@@ -56,7 +57,6 @@ fun WidgetItem(widget: Widget, modifier: Modifier = Modifier, uiPreferences: UiP
             .width(if (isDish) 200.dp else 300.dp),
         colors = CardDefaults.cardColors(containerColor = previewUiPreferences.bot_bubble_color.toColor())
     ) {
-
 
         Column {
             Box {
@@ -80,7 +80,7 @@ fun WidgetItem(widget: Widget, modifier: Modifier = Modifier, uiPreferences: UiP
                 )
 
                 if(!isDish){
-                    Row(modifier = Modifier.padding(10.dp).align(Alignment.BottomEnd)) {
+                    Row(modifier = Modifier.padding(10.dp).align(Alignment.BottomEnd), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                         widget.supported_order_types?.let { supportedType ->
                             val orderType = OrderType.fromValue(supportedType)
                             if(orderType == OrderType.DELIVERY){
@@ -126,10 +126,9 @@ fun WidgetItem(widget: Widget, modifier: Modifier = Modifier, uiPreferences: UiP
             Box(
                 modifier = Modifier.padding(12.dp).fillMaxSize()
             ) {
-
                 Column {
                     Text(
-                        text = widget.title,
+                        text = widget.title.orEmpty(),
                         style = TextStyle(
                             color = MaterialTheme.colorScheme.outline,
                             fontWeight = FontWeight.Bold,
@@ -141,7 +140,7 @@ fun WidgetItem(widget: Widget, modifier: Modifier = Modifier, uiPreferences: UiP
                     )
                     Text(
                         modifier = Modifier.padding(top = 5.dp),
-                        text = widget.subtitle,
+                        text = widget.subtitle.orEmpty(),
                         style = TextStyle(
                             color = MaterialTheme.colorScheme.outline,
                             fontWeight = FontWeight.Light,
@@ -213,25 +212,23 @@ fun WidgetItem(widget: Widget, modifier: Modifier = Modifier, uiPreferences: UiP
                 }
 
                 if (!isDish) {
-
                     OrderNowButton(
                         modifier = Modifier.align(Alignment.CenterEnd),
-                        widget.buttontext,
+                        widget.buttontext.orEmpty(),
                         previewUiPreferences
                     ) {
-
+                        onActionClick(widget)
                     }
                 }
             }
 
             if (isDish) {
-
                 OrderNowButton(
                     modifier = Modifier.fillMaxWidth(),
-                    widget.buttontext,
+                    widget.buttontext.orEmpty(),
                     previewUiPreferences
                 ) {
-
+                    onActionClick(widget)
                 }
             }
         }
@@ -266,10 +263,11 @@ fun OrderNowButton(
 @Composable
 fun ResturanView() {
 
-    WidgetItem(
+    WidgetCardItem(
         previewWidget,
         modifier = Modifier.fillMaxWidth().height(250.dp),
-        uiPreferences = previewUiPreferences
+        uiPreferences = previewUiPreferences,
+        onActionClick = {}
     )
 
 }
@@ -278,6 +276,7 @@ internal val previewWidget = Widget(
     imageURL = "https://cdn.eazy-online.com/bulkimportImages/Pizza-testing-pro-16692747768532512.png",
     productId = "637f663cde580c4ca3e0d569",
     title = "Tomato Pizza",
+    actionText = "American",
     description = "None",
     subtitle = "EAZY Cafe Coffee Day",
     buttontext = "Order Now",

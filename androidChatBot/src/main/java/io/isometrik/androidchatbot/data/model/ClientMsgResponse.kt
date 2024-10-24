@@ -19,12 +19,13 @@ data class WidgetDaum(
 )
 
 data class Widget(
-    val imageURL: String,
-    val productId: String,
-    val title: String,
-    val description: String,
-    val subtitle: String,
-    val buttontext: String,
+    val imageURL: String?,
+    val productId: String?,
+    val title: String?,
+    val actionText: String?,
+    val description: String?,
+    val subtitle: String?,
+    val buttontext: String?,
     val link: String?,
     val actionHandler: Any?,
     val price: String,
@@ -32,7 +33,7 @@ data class Widget(
     val supported_order_types: Int?,
     val average_cost: Long?,
     val avg_rating: String?,
-    val store_id: String,
-    val currency_code: String,
+    val store_id: String?,
+    val currency_code: String?,
     val discount_price: String?,
 )

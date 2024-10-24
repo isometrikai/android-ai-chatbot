@@ -1,6 +1,7 @@
 package io.isometrik.androidchatbot.presentation.screens
 
 import UserInput
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,20 +21,34 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.isometrik.androidchatbot.ChatBotActivity
+import io.isometrik.androidchatbot.data.Message
+import io.isometrik.androidchatbot.data.model.UiPreferences
+import io.isometrik.androidchatbot.presentation.AiChatBotSdk
 import io.isometrik.androidchatbot.presentation.components.MessageBox
 import io.isometrik.androidchatbot.presentation.components.TopBarWithProfile
 import io.isometrik.androidchatbot.presentation.enums.MessageType
 import io.isometrik.androidchatbot.presentation.extensions.background
+import io.isometrik.androidchatbot.presentation.listener.BotActionsListener
 import io.isometrik.androidchatbot.viewmodel.ChatScreenViewModel
 
 @Composable
 fun ChatScreen(
     viewModel: ChatScreenViewModel
 ) {
-
+    val context = LocalContext.current
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     val listOfMessages by viewModel.listOfMessages.collectAsStateWithLifecycle()
     val tempMessages by viewModel.tempMessages.collectAsStateWithLifecycle()
+
+
+    LaunchedEffect(Unit) {
+        // Subscribe to the event flow
+        viewModel.event.collect { eventMessage ->
+            // Show a toast whenever the event is triggered
+            Toast.makeText(context, eventMessage, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -83,28 +99,13 @@ fun ChatScreen(
             // For temporary messages
             items(tempMessages.size) { position ->
                 val reversedPosition = tempMessages.size - 1 - position
-                MessageBox(
-                    message = tempMessages[reversedPosition],
-                    uiPreferences = viewState.uiPreferences,
-                    profileImageUrl = viewState.profileImageUrl
-                ) { messageType, message ->
-                    if (messageType == MessageType.BOT_SUGGESTION) {
-                        viewModel.onBotSuggestionSelected(message)
-                    }
-                }
+                manageMessageBox(tempMessages[reversedPosition],viewState.uiPreferences,viewState.profileImageUrl, viewModel)
             }
 
             // For permanent messages
             items(listOfMessages.size) { position ->
                 val reversedPosition = listOfMessages.size - 1 - position
-
-                MessageBox(
-                    message = listOfMessages[reversedPosition],
-                    uiPreferences = viewState.uiPreferences,
-                    profileImageUrl = viewState.profileImageUrl
-                ) { messageType, message ->
-
-                }
+                manageMessageBox(listOfMessages[reversedPosition],viewState.uiPreferences,viewState.profileImageUrl, viewModel)
             }
         }
 
@@ -116,10 +117,30 @@ fun ChatScreen(
                     viewModel.onUserSentMessage(message)
                 }
             },
+            isEnabled = tempMessages.lastOrNull()?.type != MessageType.BOT_PROCESSING,
             uiPreferences = viewState.uiPreferences
         )
 
     }
+}
 
-
+@Composable
+fun manageMessageBox(message: Message,
+                     uiPreferences: UiPreferences,
+                     profileImageUrl: String, viewModel: ChatScreenViewModel) {
+    MessageBox(
+        message = message,
+        uiPreferences = uiPreferences,
+        profileImageUrl = profileImageUrl,
+        onActionClick = { widget ->
+            AiChatBotSdk.instance?.getBotActionsListener()?.let { listener ->
+                listener.onWidgetActionClick(widget)
+            }
+        },
+        onMessageClick = { messageType, message ->
+            if (messageType == MessageType.BOT_SUGGESTION || messageType == MessageType.BOT_RESPONSE_FLOW) {
+                viewModel.onBotSuggestionSelected(message)
+            }
+        }
+    )
 }

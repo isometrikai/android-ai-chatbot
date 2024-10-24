@@ -22,6 +22,7 @@ import io.isometrik.androidchatbot.presentation.extensions.toColor
 @Composable
 fun UserInput(
     onSendClick: (String) -> Unit,
+    isEnabled : Boolean = true,
     uiPreferences: UiPreferences,
     hint: String = "Write a message..."  // Placeholder hint text
 ) {
@@ -61,6 +62,7 @@ fun UserInput(
                 ),
                 cursorBrush = SolidColor(if(uiPreferences.mode_theme == 1) Color.Black else Color.White),
                 singleLine = true,
+                enabled = isEnabled,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -75,6 +77,7 @@ fun UserInput(
                     message.value = ""  // Clear input after sending
                 }
             },
+            enabled = isEnabled,
             shape = CircleShape,
             modifier = Modifier.size(48.dp),
             contentPadding = PaddingValues(0.dp),

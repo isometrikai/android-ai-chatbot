@@ -9,8 +9,11 @@ import io.isometrik.androidchatbot.data.api.RetrofitProvider
 import io.isometrik.androidchatbot.data.repository.ChatBotRepository
 import io.isometrik.androidchatbot.presentation.AiChatBotSdk
 import io.isometrik.androidchatbot.presentation.enums.MessageType
+import io.isometrik.androidchatbot.presentation.enums.WidgetType
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
 
@@ -29,11 +32,14 @@ class ChatScreenViewModel : ViewModel() {
     val tempMessages: StateFlow<List<Message>>
         get() = _tempMessages
 
+    private val eventChannel = Channel<String>()
+    val event = eventChannel.receiveAsFlow()
+
     var retryCont = 0
     var currentSessionId = ""
 
     init {
-        currentSessionId = (System.currentTimeMillis()/1000).toString()
+        currentSessionId = (System.currentTimeMillis() / 1000).toString()
 //        currentSessionId = getHashedSessionId((System.currentTimeMillis()/1000).toString())
         if (AiChatBotSdk.instance?.getUserSession()?.userToken.isNullOrEmpty()) {
             authenticateGuest()
@@ -51,12 +57,14 @@ class ChatScreenViewModel : ViewModel() {
                     AiChatBotSdk.instance?.getUserSession()?.userToken = it.accessToken
                     getMySession()
                 } ?: let {
+                    eventChannel.send("Error: ${authResponse.message}")
                     Log.e("Error: ", "authenticateGuest: ${authResponse.message}")
                 }
 
                 // Handle success or failure
             } catch (e: Exception) {
                 // Handle error
+                eventChannel.send("Error: ${e.message}")
                 Log.e("Error: ", "Exception: ${e.message}")
             }
         }
@@ -80,8 +88,8 @@ class ChatScreenViewModel : ViewModel() {
                         val message = Message(reply, MessageType.BOT_SUGGESTION)
                         addTempMessage(message)
                     }
-                } ?:let {
-                    if(retryCont < 2){
+                } ?: let {
+                    if (retryCont < 2) {
                         retryCont++
                         authenticateGuest()
                     }
@@ -90,7 +98,7 @@ class ChatScreenViewModel : ViewModel() {
                 // Handle success or failure
             } catch (e: Exception) {
                 // Handle error
-                if(retryCont < 2){
+                if (retryCont < 2) {
                     retryCont++
                     authenticateGuest()
                 }
@@ -98,39 +106,54 @@ class ChatScreenViewModel : ViewModel() {
         }
     }
 
-    private fun getClientMsg(askedMsg : String) {
+    private fun getClientMsg(askedMsg: String) {
         addTempMessage(Message("Processing...", MessageType.BOT_PROCESSING))
-
         viewModelScope.launch {
             try {
                 val clientMsgResponse = chatBotRepository.getClientMsg(askedMsg, currentSessionId)
                 clientMsgResponse?.let {
                     _tempMessages.value = arrayListOf()
                     addMessage(Message(it.text, MessageType.BOT_REPLY))
-                    if(it.widgetData.isNotEmpty()){
+                    if (it.widgetData.isNotEmpty()) {
                         it.widgetData[0].let { widgetData ->
                             val listOfWidget = widgetData.widget
 
-                            if(widgetData.type.equals("Card View")){
-                                if(listOfWidget.isNotEmpty()){
-                                    addMessage(Message(it.text, MessageType.BOT_WIDGET,listOfWidget = listOfWidget))
+                            val widgetType =  WidgetType.fromValue(widgetData.type)
+                            if (widgetType == WidgetType.CARD_VIEW) {
+                                if (listOfWidget.isNotEmpty()) {
+                                    addMessage(
+                                        Message(
+                                            it.text,
+                                            MessageType.BOT_WIDGET,
+                                            listOfWidget = listOfWidget
+                                        )
+                                    )
                                 }
                             }
-                            if(widgetData.type.equals("Response Flow")){
-                                if(listOfWidget.isNotEmpty()){
-
+                            if (widgetType == WidgetType.RESPONSE_FLOW) {
+                                if (listOfWidget.isNotEmpty()) {
+                                    addTempMessage(
+                                        Message(
+                                            it.text,
+                                            MessageType.BOT_RESPONSE_FLOW,
+                                            listOfWidget = listOfWidget
+                                        )
+                                    )
                                 }
                             }
 
                         }
                     }
+                }?:{
+                    _tempMessages.value = arrayListOf()
                 }
             } catch (e: Exception) {
                 // Handle error
+                _tempMessages.value = arrayListOf()
                 Log.e("Error: ", "Exception: ${e.message}")
+                eventChannel.send("Error: ${e.message}")
             }
         }
-
 
 
     }
@@ -156,6 +179,7 @@ class ChatScreenViewModel : ViewModel() {
     private fun addMessage(newMessage: Message) {
         _listOfMessages.value += newMessage
     }
+
     private fun addTempMessage(newMessage: Message) {
         _tempMessages.value += newMessage
     }
@@ -169,14 +193,14 @@ class ChatScreenViewModel : ViewModel() {
 
     }
 
-     fun processingMessage(askedMsg: String){
-         viewModelScope.launch {
-             _tempMessages.value = arrayListOf()
-             addMessage(Message(askedMsg, MessageType.USER))
+    fun processingMessage(askedMsg: String) {
+        viewModelScope.launch {
+            _tempMessages.value = arrayListOf()
+            addMessage(Message(askedMsg, MessageType.USER))
 
-             getClientMsg(askedMsg)
+            getClientMsg(askedMsg)
 
-         }
+        }
 
     }
 }

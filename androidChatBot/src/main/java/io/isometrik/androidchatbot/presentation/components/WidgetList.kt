@@ -12,28 +12,51 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.isometrik.androidchatbot.data.Message
 import io.isometrik.androidchatbot.data.model.UiPreferences
 import io.isometrik.androidchatbot.data.model.Widget
+import io.isometrik.androidchatbot.presentation.enums.MessageType
 
 @Composable
 fun WidgetList(
-    widgetList: List<Widget>,
+    message: Message,
     uiPreferences: UiPreferences,
-    onViewMoreClick: () -> Unit
+    onViewMoreClick: () -> Unit,
+    onWidgetClick: (Widget) -> Unit,
+    onActionClick: (Widget) -> Unit
 ) {
-    val SHOW_WIDGET_LIMIT = 3
-    val displayWidgets = if (widgetList.size > SHOW_WIDGET_LIMIT) widgetList.take(SHOW_WIDGET_LIMIT) else widgetList
+    val widgetList = message.listOfWidget
+    if(message.type == MessageType.BOT_WIDGET){
+        val SHOW_WIDGET_LIMIT = 3
+        val displayWidgets = if (widgetList.size > SHOW_WIDGET_LIMIT) widgetList.take(SHOW_WIDGET_LIMIT) else widgetList
 
-    LazyRow {
-        items(displayWidgets.size) { position ->
-            WidgetItem(widget = widgetList[position], uiPreferences = uiPreferences)
-        }
-        if (widgetList.size > SHOW_WIDGET_LIMIT) {
-            item {
-                ViewMoreItem(onClick = onViewMoreClick)
+        LazyRow {
+            items(displayWidgets.size) { position ->
+                WidgetCardItem(widget = widgetList[position], uiPreferences = uiPreferences, onActionClick = onActionClick)
+            }
+            if (widgetList.size > SHOW_WIDGET_LIMIT) {
+                item {
+                    ViewMoreItem(onClick = onViewMoreClick)
+                }
             }
         }
+    }else if(message.type == MessageType.BOT_RESPONSE_FLOW){
+        val SHOW_WIDGET_LIMIT = 4
+        val displayWidgets = if (widgetList.size > SHOW_WIDGET_LIMIT) widgetList.take(SHOW_WIDGET_LIMIT) else widgetList
+        LazyRow {
+            items(displayWidgets.size) { position ->
+                WidgetResponseFlowItem(widget = widgetList[position], uiPreferences = uiPreferences, onWidgetClick = onWidgetClick)
+            }
+//            if (widgetList.size > SHOW_WIDGET_LIMIT) {
+//                item {
+//                    ViewMoreItem(onClick = onViewMoreClick)
+//                }
+//            }
+        }
     }
+
+
+
 }
 
 @Composable
