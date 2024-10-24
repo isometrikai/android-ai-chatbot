@@ -40,7 +40,8 @@ fun MessageBox(
     uiPreferences: UiPreferences,
     profileImageUrl: String,
     onMessageClick: (MessageType, String) -> Unit,
-    onActionClick : (Widget) -> Unit
+    onActionClick : (Widget) -> Unit,
+    onViewMoreClick : (Message) -> Unit
 ) {
     val modifier = if (
         message.type == MessageType.WELCOME) {
@@ -193,14 +194,15 @@ fun MessageBox(
                     }
                 } else if (message.type == MessageType.BOT_PROCESSING) {
                     Box(modifier = modifier.padding(12.dp)) {
-                        Text(
-                            text = message.message,
-                            style = TextStyle(
-                                color = uiPreferences.bot_bubble_font_color.toColor(),
-                                fontSize = 14.sp,
-                                fontFamily = uiPreferences.font_style.toFont()
-                            )
-                        )
+                        BotProcessAnimation(preferences = uiPreferences)
+//                        Text(
+//                            text = message.message,
+//                            style = TextStyle(
+//                                color = uiPreferences.bot_bubble_font_color.toColor(),
+//                                fontSize = 14.sp,
+//                                fontFamily = uiPreferences.font_style.toFont()
+//                            )
+//                        )
                     }
                 } else if (message.type == MessageType.BOT_REPLY) {
                     Box(modifier = modifier.padding(12.dp)) {
@@ -218,9 +220,11 @@ fun MessageBox(
                         message,
                         uiPreferences,
                         onActionClick = onActionClick,
-                        onWidgetClick = {},
+                        onWidgetClick = {
+                            // for widget no need this action only action click required
+                        },
                         onViewMoreClick = {
-                            // handle view more click handle
+                            onViewMoreClick(message)
                         }
                     )
 
@@ -233,7 +237,7 @@ fun MessageBox(
                             onMessageClick(message.type, widget.actionText.orEmpty())
                         },
                         onViewMoreClick = {
-                            // handle view more click handle
+                            onViewMoreClick(message)
                         }
                     )
                 } else {
