@@ -48,7 +48,7 @@ class ChatBotRepository(private val chatBotService: ChatBotService) {
             return chatBotService.getClientMsg("application/json",
                 it,
                 ClientMsgRequest(
-                    AiChatBotSdk.instance?.imConfiguration?.chatBotId!!,
+                    AiChatBotSdk.instance?.imConfiguration?.chatBotId.toString(),
                     askedMsg,
                     sessionId,
                     AiChatBotSdk.instance?.imConfiguration?.storeCategoryId!!,

@@ -1,7 +1,7 @@
 package io.isometrik.androidchatbot.data.model
 
 class ClientMsgRequest (
-    val chat_bot_id: Int,
+    val chat_bot_id: String,
     val message: String,
     val sessionId: String,
     val storeCategoryId: String,

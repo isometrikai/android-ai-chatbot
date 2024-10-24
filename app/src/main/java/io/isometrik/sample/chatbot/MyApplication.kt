@@ -9,7 +9,7 @@ class MyApplication : Application() {
         super.onCreate()
         AiChatBotSdk.instance?.sdkInitialize(this)
         AiChatBotSdk.instance?.createConfiguration(
-            getString(R.string.chat_bot_id),
+            getString(R.string.chat_bot_id).toInt(),
             getString(R.string.app_secret),
             getString(R.string.license_key),
             getString(R.string.user_id),

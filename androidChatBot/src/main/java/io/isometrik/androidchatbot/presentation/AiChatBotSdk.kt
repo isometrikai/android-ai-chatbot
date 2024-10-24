@@ -2,6 +2,7 @@ package io.isometrik.androidchatbot.presentation
 
 import android.app.Application
 import android.content.Context
+import io.isometrik.androidchatbot.presentation.listener.BotActionsListener
 import io.isometrik.androidchatbot.util.UserSession
 import kotlin.concurrent.Volatile
 
@@ -12,6 +13,7 @@ class AiChatBotSdk private constructor() {
     private var userSession: UserSession? = null
       var imConfiguration: IMConfiguration? = null
     private var applicationContext: Context? = null
+    private var botActionsListener : BotActionsListener? = null
 
     /**
      * private constructor.
@@ -52,7 +54,7 @@ class AiChatBotSdk private constructor() {
      * @param licenseKey the license key
      */
     fun createConfiguration(
-        chatBotId: String,
+        chatBotId: Int,
         appSecret: String,
         licenseKey: String,
         userId: String,
@@ -64,7 +66,7 @@ class AiChatBotSdk private constructor() {
     ) {
         if (applicationContext == null) {
             throw RuntimeException("Initialize the sdk before creating configuration.")
-        } else if (chatBotId.isEmpty()) {
+        } else if (chatBotId == 0) {
             throw RuntimeException("Pass a valid chatBotId for AiChatBot sdk initialization.")
         } else if (storeCategoryId.isEmpty()) {
             throw RuntimeException("Pass a valid storeCategoryId for AiChatBot sdk initialization.")
@@ -80,7 +82,7 @@ class AiChatBotSdk private constructor() {
 
          imConfiguration =
             IMConfiguration(
-                applicationContext!!, licenseKey, appSecret,userId,createIsometrikUser,chatBotId.toInt(),storeCategoryId,location)
+                applicationContext!!, licenseKey, appSecret,userId,createIsometrikUser,chatBotId,storeCategoryId,location)
 
         userSession = UserSession(applicationContext)
     }
@@ -121,6 +123,15 @@ class AiChatBotSdk private constructor() {
         if (userSession == null) {
             throw RuntimeException("Create configuration before trying to access isometrik object.")
         }
+    }
+
+
+    fun addBotActionsListener(botActionsListener: BotActionsListener){
+        this.botActionsListener = botActionsListener
+    }
+
+    fun getBotActionsListener() : BotActionsListener?{
+       return botActionsListener
     }
 
 

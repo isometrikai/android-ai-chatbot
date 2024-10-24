@@ -38,14 +38,15 @@ import io.isometrik.androidchatbot.presentation.extensions.toFont
 fun MessageBox(
     message: Message,
     uiPreferences: UiPreferences,
-    profileImageUrl : String,
-    onMessageClick: (MessageType, String) -> Unit
+    profileImageUrl: String,
+    onMessageClick: (MessageType, String) -> Unit,
+    onActionClick : (Widget) -> Unit
 ) {
     val modifier = if (
         message.type == MessageType.WELCOME) {
         Modifier
             .padding(start = 10.dp, end = 16.dp)
-    } else if( message.type == MessageType.BOT_WIDGET){
+    } else if (message.type == MessageType.BOT_WIDGET) {
         Modifier
             .padding(start = 10.dp, end = 16.dp)
             .background(
@@ -56,15 +57,15 @@ fun MessageBox(
                     )
                 )
             )
-    }else if (message.type == MessageType.USER) {
+    } else if (message.type == MessageType.USER) {
         Modifier
             .padding(start = 16.dp, end = 8.dp)
             .clip(RoundedCornerShape(topEnd = 15.dp, topStart = 15.dp, bottomStart = 15.dp))
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(
-                       uiPreferences.user_bubble_color.toColor(),
-                       uiPreferences.user_bubble_color.toColor()
+                        uiPreferences.user_bubble_color.toColor(),
+                        uiPreferences.user_bubble_color.toColor()
                     )
                 )
             )
@@ -78,7 +79,11 @@ fun MessageBox(
                 shape = RoundedCornerShape(20.dp)
             )
 
-    } else if(message.type == MessageType.BOT_REPLY || message.type == MessageType.BOT_PROCESSING) {
+    }else if (message.type == MessageType.BOT_RESPONSE_FLOW) {
+        Modifier
+            .padding(start = 10.dp, end = 16.dp)
+
+    } else if (message.type == MessageType.BOT_REPLY || message.type == MessageType.BOT_PROCESSING) {
         Modifier
             .padding(start = 10.dp, end = 16.dp)
             .clip(RoundedCornerShape(topEnd = 15.dp, topStart = 15.dp, bottomEnd = 15.dp))
@@ -109,18 +114,20 @@ fun MessageBox(
         if (message.type == MessageType.USER) Alignment.CenterEnd else Alignment.CenterStart
 
     Box(
-        modifier = Modifier.padding(vertical = if (message.type == MessageType.BOT_SUGGESTION) 4.dp else 8.dp)
-            .fillMaxWidth().clickable { onMessageClick(message.type, message.message)  },
+        modifier = Modifier.padding(vertical = if (message.type == MessageType.BOT_SUGGESTION || message.type == MessageType.BOT_WIDGET) 4.dp else 8.dp)
+            .fillMaxWidth().clickable { onMessageClick(message.type, message.message) },
         contentAlignment = boxArrangement
     ) {
         Row(
             verticalAlignment = Alignment.Bottom,
         ) {
             if (message.type == MessageType.BOT_REPLY || message.type == MessageType.BOT_PROCESSING) {
-                ProfileImageWithPlaceholder(modifier = Modifier.padding(start = 10.dp),profileImageUrl = profileImageUrl,
-                    placeholderColor = uiPreferences.user_bubble_color.toColor())
+                ProfileImageWithPlaceholder(
+                    modifier = Modifier.padding(start = 10.dp), profileImageUrl = profileImageUrl,
+                    placeholderColor = uiPreferences.user_bubble_color.toColor()
+                )
             }
-            if(message.type == MessageType.BOT_WIDGET){
+            if (message.type == MessageType.BOT_WIDGET || message.type == MessageType.BOT_RESPONSE_FLOW) {
                 Spacer(modifier = Modifier.width(50.dp))
             }
 
@@ -128,7 +135,8 @@ fun MessageBox(
                 if (message.type == MessageType.WELCOME) {
                     Column {
                         Image(
-                            modifier = Modifier.padding(start = 30.dp).height(100.dp).graphicsLayer(scaleX = -1f),
+                            modifier = Modifier.padding(start = 30.dp).height(100.dp)
+                                .graphicsLayer(scaleX = -1f),
                             painter = painterResource(id = R.drawable.chat_initiator_avtar),
                             contentDescription = "chat initiator avtar",
                             contentScale = ContentScale.FillHeight
@@ -183,34 +191,52 @@ fun MessageBox(
                         }
 
                     }
-                } else if(message.type == MessageType.BOT_PROCESSING){
+                } else if (message.type == MessageType.BOT_PROCESSING) {
                     Box(modifier = modifier.padding(12.dp)) {
                         Text(
                             text = message.message,
                             style = TextStyle(
-                                color =  uiPreferences.bot_bubble_font_color.toColor(),
+                                color = uiPreferences.bot_bubble_font_color.toColor(),
                                 fontSize = 14.sp,
                                 fontFamily = uiPreferences.font_style.toFont()
                             )
                         )
                     }
-                } else if(message.type == MessageType.BOT_REPLY){
+                } else if (message.type == MessageType.BOT_REPLY) {
                     Box(modifier = modifier.padding(12.dp)) {
                         Text(
                             text = message.message,
                             style = TextStyle(
-                                color =  uiPreferences.bot_bubble_font_color.toColor(),
+                                color = uiPreferences.bot_bubble_font_color.toColor(),
                                 fontSize = 14.sp,
                                 fontFamily = uiPreferences.font_style.toFont()
                             )
                         )
                     }
-                } else if(message.type == MessageType.BOT_WIDGET){
-                    WidgetList(message.listOfWidget,uiPreferences){
-                        // on View More click
-                    }
+                } else if (message.type == MessageType.BOT_WIDGET) {
+                    WidgetList(
+                        message,
+                        uiPreferences,
+                        onActionClick = onActionClick,
+                        onWidgetClick = {},
+                        onViewMoreClick = {
+                            // handle view more click handle
+                        }
+                    )
 
-                }else {
+                } else if(message.type == MessageType.BOT_RESPONSE_FLOW){
+                    WidgetList(
+                        message,
+                        uiPreferences,
+                        onActionClick = onActionClick,
+                        onWidgetClick = { widget ->
+                            onMessageClick(message.type, widget.actionText.orEmpty())
+                        },
+                        onViewMoreClick = {
+                            // handle view more click handle
+                        }
+                    )
+                } else {
                     Box(modifier = modifier.padding(12.dp)) {
                         Text(
                             text = message.message,
