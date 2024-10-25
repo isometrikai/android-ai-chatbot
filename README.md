@@ -92,10 +92,14 @@ You are now ready to open a chat bot screen. You can launch ChatBotActivity clic
 * Kotlin version 1.9.0
 * composeBom 2024.09.03
 
-![](docs/Screenshot_1.png)
-![](docs/Screenshot_2.png)
-![](docs/Screenshot_3.png)
-![](docs/Screenshot_4.png)
+
+<p float="left">
+  <img src="docs/Screenshot_1.png" width="200" />
+  <img src="docs/Screenshot_2.png" width="200" />
+  <img src="docs/Screenshot_3.png" width="200" />
+  <img src="docs/Screenshot_4.png" width="200" />
+</p>
+
 
 
 
