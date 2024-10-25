@@ -38,7 +38,7 @@ Open your build.gradle file (app-level) and add the following line in the depend
 
 ```groovy
 dependencies {
-    implementation 'com.github.isometrikai:android-ai-chatbot:1.0.2'
+    implementation 'com.github.isometrikai:android-ai-chatbot:1.0.3'
 }
 ```
 ### Step 4: Sync Your Project
