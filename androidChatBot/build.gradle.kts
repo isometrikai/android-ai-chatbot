@@ -84,10 +84,15 @@ afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("release") {
-                from(components["release"])
-                groupId = "io.isometrik.chatbot"
-                artifactId = "android"
-                version = "1.0.0"
+                val releaseComponent = components.findByName("release")
+                if (releaseComponent != null) {
+                    from(releaseComponent)
+                    groupId = "io.isometrik.chatbot"
+                    artifactId = "android"
+                    version = "1.0.2"
+                } else {
+                    println("No build artifacts found for release component")
+                }
             }
         }
     }
