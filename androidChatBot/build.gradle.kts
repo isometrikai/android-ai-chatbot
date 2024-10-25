@@ -28,11 +28,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -89,7 +89,7 @@ afterEvaluate {
                     from(releaseComponent)
                     groupId = "io.isometrik.chatbot"
                     artifactId = "android"
-                    version = "1.0.2"
+                    version = "1.0.3"
                 } else {
                     println("No build artifacts found for release component")
                 }
