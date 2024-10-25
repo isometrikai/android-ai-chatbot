@@ -47,17 +47,31 @@ import io.isometrik.androidchatbot.presentation.extensions.toFont
 import io.isometrik.androidchatbot.presentation.extensions.toPrice
 
 @Composable
-fun WidgetCardItem(widget: Widget, modifier: Modifier = Modifier, uiPreferences: UiPreferences, onActionClick : (Widget) -> Unit) {
+fun WidgetCardItem(
+    widget: Widget,
+    modifier: Modifier = Modifier,
+    uiPreferences: UiPreferences,
+    fromViewMore: Boolean = false,
+    onActionClick: (Widget) -> Unit
+) {
     val isDish =
         widget.avg_rating.isNullOrBlank() && widget.average_cost == null && widget.supported_order_types == null
+
+    // set width of widget
+    val mModifier = if (fromViewMore) {
+        modifier.fillMaxWidth()
+    } else if (isDish) {
+        modifier.width(200.dp)
+    } else {
+        modifier.width(320.dp)
+            .height(260.dp)
+    }
     Card(
         shape = RoundedCornerShape(8.dp),
-        modifier = modifier
-            .padding(8.dp)
-            .width(if (isDish) 200.dp else 300.dp),
+        modifier = mModifier
+            .padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = previewUiPreferences.bot_bubble_color.toColor())
     ) {
-
         Column {
             Box {
                 val painter = rememberAsyncImagePainter(
@@ -79,23 +93,26 @@ fun WidgetCardItem(widget: Widget, modifier: Modifier = Modifier, uiPreferences:
                     contentScale = ContentScale.Crop
                 )
 
-                if(!isDish){
-                    Row(modifier = Modifier.padding(10.dp).align(Alignment.BottomEnd), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                if (!isDish) {
+                    Row(
+                        modifier = Modifier.padding(10.dp).align(Alignment.BottomEnd),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
                         widget.supported_order_types?.let { supportedType ->
                             val orderType = OrderType.fromValue(supportedType)
-                            if(orderType == OrderType.DELIVERY){
+                            if (orderType == OrderType.DELIVERY) {
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_support_delivery),
                                     contentDescription = "delivery",
                                     modifier = Modifier.size(30.dp)
                                 )
-                            } else if(orderType == OrderType.SELF_PICKUP ){
+                            } else if (orderType == OrderType.SELF_PICKUP) {
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_support_self_pickup),
                                     contentDescription = "self pickup",
                                     modifier = Modifier.size(30.dp)
                                 )
-                            } else if(orderType == OrderType.BOTH){
+                            } else if (orderType == OrderType.BOTH) {
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_support_delivery),
                                     contentDescription = "delivery",
@@ -110,7 +127,7 @@ fun WidgetCardItem(widget: Widget, modifier: Modifier = Modifier, uiPreferences:
                         }
 
                         widget.table_reservations?.let {
-                            if(it){
+                            if (it) {
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_support_dining),
                                     contentDescription = "dining",
@@ -261,7 +278,7 @@ fun OrderNowButton(
 
 @Preview
 @Composable
-fun ResturanView() {
+fun WidgetCardView() {
 
     WidgetCardItem(
         previewWidget,
