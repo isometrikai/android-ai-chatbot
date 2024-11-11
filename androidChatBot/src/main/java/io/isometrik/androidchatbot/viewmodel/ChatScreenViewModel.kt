@@ -203,4 +203,12 @@ class ChatScreenViewModel : ViewModel() {
         }
 
     }
+
+    fun resetSession(){
+        _listOfMessages.value = arrayListOf()
+        _tempMessages.value = arrayListOf()
+        currentSessionId = (System.currentTimeMillis() / 1000).toString()
+
+        getMySession()
+    }
 }

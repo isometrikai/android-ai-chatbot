@@ -18,9 +18,9 @@ interface ChatBotService {
     @POST("v2/guestAuth")
     suspend fun guestAuth(@Body request : GuestAuthRequest): GuestAuthResponse
 
-    @GET("v2/guest/mygpts")
+    @GET("v1/guest/mygpts")
     suspend fun getMyGPTs(@Header("Authorization") authorization : String, @Query("id") id: Int): MySessionResponse
 
-    @POST("v2/gptClientMsg")
+    @POST("v1/gptClientMsg")
     suspend fun getClientMsg(@Header("Content-Type") contentType : String, @Header("Authorization") authorization : String,@Body request : ClientMsgRequest): ClientMsgResponse
 }

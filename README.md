@@ -38,7 +38,7 @@ Open your build.gradle file (app-level) and add the following line in the depend
 
 ```groovy
 dependencies {
-    implementation 'com.github.isometrikai:android-ai-chatbot:1.0.3'
+    implementation 'com.github.isometrikai:android-ai-chatbot:1.0.5'
 }
 ```
 ### Step 4: Sync Your Project
@@ -82,6 +82,18 @@ You are now ready to open a chat bot screen. You can launch ChatBotActivity clic
 ```kotlin
  val i = Intent(this,ChatBotActivity::class.java)
             startActivity(i)
+```
+
+### Step 4: Implement widget click listener
+
+```kotlin
+
+ AiChatBotSdk.instance?.addBotActionsListener(object : BotActionsListener{
+            override fun onWidgetActionClick(widget: Widget) {
+                Toast.makeText(this@MainActivity,"Click: ${widget.title}",Toast.LENGTH_LONG).show()
+            }
+        })
+
 ```
 
 # Technical details
