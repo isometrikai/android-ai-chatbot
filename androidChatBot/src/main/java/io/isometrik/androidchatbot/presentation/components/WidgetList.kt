@@ -54,7 +54,7 @@ fun WidgetList(
             }
         }
     } else if (message.type == MessageType.BOT_RESPONSE_FLOW) {
-        val SHOW_WIDGET_LIMIT = 10
+        val SHOW_WIDGET_LIMIT = 3
         val displayWidgets =
             if (widgetList.size > SHOW_WIDGET_LIMIT) widgetList.take(SHOW_WIDGET_LIMIT) else widgetList
         LazyRow {
@@ -65,11 +65,17 @@ fun WidgetList(
                     onWidgetClick = onWidgetClick
                 )
             }
-//            if (widgetList.size > SHOW_WIDGET_LIMIT) {
-//                item {
-//                    ViewMoreItem(onClick = onViewMoreClick)
-//                }
-//            }
+            if (widgetList.size > SHOW_WIDGET_LIMIT) {
+                item {
+                    WidgetResponseFlowItem(
+                        widget = Widget(actionText = "View All"),
+                        uiPreferences = uiPreferences,
+                        onWidgetClick = {
+                            onViewMoreClick()
+                        }
+                    )
+                }
+            }
         }
     }
 

@@ -1,3 +1,10 @@
 <resources>
     <string name="title_activity_chat_bot">ChatBotActivity</string>
+    <string name="bot_exit_screen">Exit Screen</string>
+    <string name="bot_do_you_want_to_leave_this_screen">Do you want to leave this screen?</string>
+    <string name="bot_exit">Exit</string>
+    <string name="bot_cancel">Cancel</string>
+    <string name="bot_session_restart">Session restart</string>
+    <string name="bot_do_you_want_to_reset_current_session">Do you want to reset current session?</string>
+    <string name="bot_yes">Yes</string>
 </resources>

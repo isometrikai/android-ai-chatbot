@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -85,8 +86,8 @@ fun TopBarWithProfile(
 
         IconButton(onClick = onMenuClick) {
             Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = "More Options",
+                imageVector = Icons.Default.Refresh,
+                contentDescription = "Refresh",
                 tint = MaterialTheme.colorScheme.outline
             )
         }
