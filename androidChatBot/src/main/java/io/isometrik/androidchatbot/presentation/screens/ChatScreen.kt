@@ -20,7 +20,6 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -98,11 +97,6 @@ fun ChatScreen(
                 onMenuClick = {
                     showResetSessionDialog = true
                 },
-            )
-
-            // Divider to separate TopBar from the rest of the content
-            HorizontalDivider(
-                thickness = 0.5.dp, color = Color.Gray
             )
 
             // Chat messages or content area
