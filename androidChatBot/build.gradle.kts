@@ -40,7 +40,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.3.1"
     }
-
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 }
 
 dependencies {
@@ -82,7 +86,7 @@ afterEvaluate {
                     from(releaseComponent)
                     groupId = "io.isometrik.chatbot"
                     artifactId = "android"
-                    version = "1.0.3"
+                    version = "1.1.0"
                 } else {
                     println("No build artifacts found for release component")
                 }
