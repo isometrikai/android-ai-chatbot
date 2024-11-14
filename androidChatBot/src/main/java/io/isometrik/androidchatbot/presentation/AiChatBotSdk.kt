@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import io.isometrik.androidchatbot.presentation.listener.BotActionsListener
 import io.isometrik.androidchatbot.util.UserSession
-import kotlin.concurrent.Volatile
 
 /**
  * The IsometrikChatBotSdk singleton to expose sdk functionality to other modules.
@@ -136,7 +135,6 @@ class AiChatBotSdk private constructor() {
 
 
     companion object {
-        @Volatile
         private var aiChatBotSdk: AiChatBotSdk? = null
         @JvmStatic
         val instance: AiChatBotSdk?

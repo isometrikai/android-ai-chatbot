@@ -6,7 +6,7 @@ enum class WidgetType(val value : String) {
 
     companion object {
         fun fromValue(value: String): WidgetType? {
-            return entries.find { it.value == value }
+            return values().find { it.value == value }
         }
     }
 }
