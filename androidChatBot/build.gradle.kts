@@ -54,7 +54,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.material)
 
     implementation(libs.androidx.activity.compose)
