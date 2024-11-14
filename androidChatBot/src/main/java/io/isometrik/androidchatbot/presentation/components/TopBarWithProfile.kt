@@ -5,8 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.MoreVert
+
+import androidx.compose.material.icons.filled.ArrowBack
+
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -44,7 +45,7 @@ fun TopBarWithProfile(
     ) {
         IconButton(onClick = onBackArrowClick) {
             Icon(
-                imageVector =  Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
+                imageVector =  Icons.Default.ArrowBack,
                 contentDescription = "Back Arrow",
                 tint = MaterialTheme.colorScheme.outline
             )
